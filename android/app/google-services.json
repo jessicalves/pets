@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "812956187920",
+    "project_id": "petsapp-50602",
+    "storage_bucket": "petsapp-50602.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:812956187920:android:093e24173e1c3adf057995",
+        "android_client_info": {
+          "package_name": "com.jessmobilesolutions.pets"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "812956187920-g0urpt7meunlc5i4sriimv9e8dv5rchb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jessmobilesolutions.pets",
+            "certificate_hash": "24f39ff924575abce73786e24034483f842dc86f"
+          }
+        },
+        {
+          "client_id": "812956187920-4fklg3qld8r6u9m5mb0rulv6kdpheimr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5hAVZq-cPS-9mBWyo9C5Ct6uMSFBN6D0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "812956187920-4fklg3qld8r6u9m5mb0rulv6kdpheimr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

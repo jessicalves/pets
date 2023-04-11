@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -100,9 +102,18 @@ class _NewDonationState extends State<NewDonation> {
   }
 
   _salvarDoacao() async {
-
     await _uploadImagens();
-    print(_doacao.foto);
+
+    FirebaseAuth auth = FirebaseAuth.instance;
+    var usuarioLogado = auth.currentUser;
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    var doacoesRef = db
+        .collection('minhas_doacoes')
+        .doc(usuarioLogado?.uid)
+        .collection("doacoes")
+        .doc(_doacao.id)
+        .set(_doacao.toMap())
+        .then((value) => {Navigator.pushReplacementNamed(context, "/donation")});
   }
 
   @override

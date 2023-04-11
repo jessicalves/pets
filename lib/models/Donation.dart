@@ -12,10 +12,25 @@ class Donation {
 
   Donation() {
     FirebaseFirestore db = FirebaseFirestore.instance;
-    CollectionReference novaColecaoRef = db.collection("doacoes");
+    CollectionReference novaColecaoRef = db.collection("minhas_doacoes");
     var novoRegistroRef = novaColecaoRef.doc();
     var novoRegistroKey = novoRegistroRef.id;
     id = novoRegistroKey;
+  }
+
+  Map<String, dynamic> toMap(){
+    Map<String, dynamic> map = {
+      "id" : id,
+      "estado": estado,
+      "categoria": categoria,
+      "titulo": titulo,
+      "descricao": descricao,
+      "contato": contato,
+      "cidade": cidade,
+      "foto": foto,
+    };
+
+    return map;
   }
 
   String get foto => _foto;

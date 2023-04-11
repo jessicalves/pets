@@ -90,7 +90,6 @@ class _LoginState extends State<Login> {
                 InputCustomizado(
                   controller: _controllerEmail,
                   hint: "E-mail",
-                  onSubmitted: (_){},
                   autofocus: true,
                   type: TextInputType.emailAddress,
                 ),
@@ -99,7 +98,6 @@ class _LoginState extends State<Login> {
                 ),
                 InputCustomizado(
                   controller: _controllerSenha,
-                  onSubmitted: (_){},
                   hint: "Senha",
                   obscure: true,
                   type: TextInputType.text,

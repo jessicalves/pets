@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pets/views/Articles.dart';
 import 'package:pets/views/Donation.dart';
 import 'package:pets/views/Login.dart';
+import 'package:pets/views/MyDonations.dart';
 import 'package:pets/views/RegisterDonation.dart';
 
 class RouteGenerator {
@@ -10,14 +10,12 @@ class RouteGenerator {
 
     if (name == '/') {
       return MaterialPageRoute(builder: (context) => Login());
-    } else if (name == '/articles') {
+    } else if (name == '/my') {
       final args = settings.arguments;
-      return MaterialPageRoute(builder: (context) => Articles());
-    }
-    else if (name == '/donation') {
+      return MaterialPageRoute(builder: (context) => MyDonations());
+    } else if (name == '/donation') {
       return MaterialPageRoute(builder: (context) => HomeDonation());
-    }
-    else if (name == '/newDonation') {
+    } else if (name == '/newDonation') {
       return MaterialPageRoute(builder: (context) => NewDonation());
     }
 

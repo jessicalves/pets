@@ -12,7 +12,7 @@ class Donation {
 
   Donation() {
     FirebaseFirestore db = FirebaseFirestore.instance;
-    CollectionReference novaColecaoRef = db.collection("minhas_doacoes");
+    CollectionReference novaColecaoRef = db.collection("doacoes");
     var novoRegistroRef = novaColecaoRef.doc();
     var novoRegistroKey = novoRegistroRef.id;
     id = novoRegistroKey;

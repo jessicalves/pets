@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 
-class Articles extends StatefulWidget {
-  const Articles({Key? key}) : super(key: key);
+class MyDonations extends StatefulWidget {
+  const MyDonations({Key? key}) : super(key: key);
 
   @override
-  State<Articles> createState() => _ArticlesState();
+  State<MyDonations> createState() => _MyDonationsState();
 }
 
-class _ArticlesState extends State<Articles> {
+class _MyDonationsState extends State<MyDonations> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "Artigos",
+          "Minhas Doações",
           style: TextStyle(color: Colors.black),
         ),
         automaticallyImplyLeading: false,
@@ -25,13 +25,8 @@ class _ArticlesState extends State<Articles> {
             color: Colors.black,
           ),
           onPressed: () {
-            Navigator.pushReplacementNamed(context, "/donation");
+            Navigator.pop(context);
           },
-        ),
-      ),
-      body: Container(
-        child: const Center(
-          child: Text("Artigos"),
         ),
       ),
     );

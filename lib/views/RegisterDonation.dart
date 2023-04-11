@@ -27,6 +27,7 @@ class _NewDonationState extends State<NewDonation> {
   final TextEditingController _controllerContato = TextEditingController();
   final TextEditingController _controllerCidade = TextEditingController();
   late Donation _doacao;
+  late BuildContext _dialogContext;
 
   Future<void> _selectImage() async {
     final pickedImage = await pickImage();
@@ -69,29 +70,29 @@ class _NewDonationState extends State<NewDonation> {
     final Estados = await controller.buscaTodosEstados();
     for (var estado in Estados) {
       _litaEstados.add(DropdownMenuItem(
-        value: estado.id.toString(),
+        value: estado.sigla.toString(),
         child: Text(estado.sigla.toString()),
       ));
     }
 
     _litaCategoria.add(const DropdownMenuItem(
-      value: "1",
+      value: "Alimentos",
       child: Text("Alimentos"),
     ));
     _litaCategoria.add(const DropdownMenuItem(
-      value: "2",
+      value: "Acessórios",
       child: Text("Acessórios"),
     ));
     _litaCategoria.add(const DropdownMenuItem(
-      value: "3",
+      value: "Brinquedos",
       child: Text("Brinquedos"),
     ));
     _litaCategoria.add(const DropdownMenuItem(
-      value: "4",
+      value: "Medicamentos",
       child: Text("Medicamentos"),
     ));
     _litaCategoria.add(const DropdownMenuItem(
-      value: "5",
+      value: "Outros",
       child: Text("Outros"),
     ));
 
@@ -101,19 +102,44 @@ class _NewDonationState extends State<NewDonation> {
     });
   }
 
+  _abrirDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                CircularProgressIndicator(),
+                SizedBox(
+                  height: 20,
+                ),
+                Text("Salvando Doação...")
+              ],
+            ),
+          );
+        });
+  }
+
   _salvarDoacao() async {
+    _abrirDialog(_dialogContext);
+
     await _uploadImagens();
 
     FirebaseAuth auth = FirebaseAuth.instance;
     var usuarioLogado = auth.currentUser;
     FirebaseFirestore db = FirebaseFirestore.instance;
-    var doacoesRef = db
+    db
         .collection('minhas_doacoes')
         .doc(usuarioLogado?.uid)
         .collection("doacoes")
         .doc(_doacao.id)
         .set(_doacao.toMap())
-        .then((value) => {Navigator.pushReplacementNamed(context, "/donation")});
+        .then((value) => {
+              Navigator.pop(_dialogContext),
+              Navigator.pop(context)
+            });
   }
 
   @override
@@ -253,9 +279,9 @@ class _NewDonationState extends State<NewDonation> {
                         child: Padding(
                       padding: const EdgeInsets.all(8),
                       child: DropdownButtonFormField(
-                        hint: const Text("Estados"),
+                        hint: const Text("Estado"),
                         onSaved: (estado) {
-                          _doacao.estado = estado!;
+                          _doacao.estado = estado.toString()!;
                         },
                         style:
                             const TextStyle(color: Colors.black, fontSize: 20),
@@ -280,50 +306,91 @@ class _NewDonationState extends State<NewDonation> {
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 15, top: 15),
-                  child: InputCustomizado(
-                    onSubmitted: (titulo) {
-                      _doacao.titulo = titulo;
-                    },
-                    hint: "Título",
-                    controller: _controllerTitulo,
-                  ),
-                ),
+                    padding: const EdgeInsets.only(bottom: 15, top: 15),
+                    child: TextFormField(
+                        controller: _controllerTitulo,
+                        style: const TextStyle(fontSize: 16),
+                        onSaved: (titulo) {
+                          _doacao.titulo = titulo!;
+                        },
+                        decoration: InputDecoration(
+                            contentPadding:
+                                const EdgeInsets.fromLTRB(32, 16, 32, 16),
+                            hintText: "Título",
+                            filled: true,
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30)),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    const BorderSide(color: Colors.green),
+                                borderRadius: BorderRadius.circular(30))),
+                        cursorColor: Colors.green)),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 15),
-                  child: InputCustomizado(
-                    hint: "Descricão",
-                    onSubmitted: (descricao) {
-                      _doacao.descricao = descricao;
-                    },
-                    controller: _controllerDescricao,
-                  ),
-                ),
+                    padding: const EdgeInsets.only(bottom: 15),
+                    child: TextFormField(
+                        controller: _controllerDescricao,
+                        style: const TextStyle(fontSize: 16),
+                        onSaved: (descricao) {
+                          _doacao.descricao = descricao!;
+                        },
+                        decoration: InputDecoration(
+                            contentPadding:
+                                const EdgeInsets.fromLTRB(32, 16, 32, 16),
+                            hintText: "Descricão",
+                            filled: true,
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30)),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    const BorderSide(color: Colors.green),
+                                borderRadius: BorderRadius.circular(30))),
+                        cursorColor: Colors.green)),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 15),
-                  child: InputCustomizado(
-                    hint: "Contato",
-                    onSubmitted: (contato) {
-                      _doacao.contato = contato;
-                    },
-                    controller: _controllerContato,
-                    type: TextInputType.phone,
-                  ),
-                ),
+                    padding: const EdgeInsets.only(bottom: 15),
+                    child: TextFormField(
+                        controller: _controllerContato,
+                        keyboardType: TextInputType.phone,
+                        style: const TextStyle(fontSize: 16),
+                        onSaved: (contato) {
+                          _doacao.contato = contato!;
+                        },
+                        decoration: InputDecoration(
+                            contentPadding:
+                                const EdgeInsets.fromLTRB(32, 16, 32, 16),
+                            hintText: "Contato",
+                            filled: true,
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30)),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    const BorderSide(color: Colors.green),
+                                borderRadius: BorderRadius.circular(30))),
+                        cursorColor: Colors.green)),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 15),
-                  child: InputCustomizado(
-                    hint: "Cidade",
-                    onSubmitted: (cidade) {
-                      _doacao.cidade = cidade;
-                    },
-                    controller: _controllerCidade,
-                  ),
-                ),
+                    padding: const EdgeInsets.only(bottom: 15),
+                    child: TextFormField(
+                        controller: _controllerCidade,
+                        style: const TextStyle(fontSize: 16),
+                        onSaved: (cidade) {
+                          _doacao.cidade = cidade!;
+                        },
+                        decoration: InputDecoration(
+                            contentPadding:
+                                const EdgeInsets.fromLTRB(32, 16, 32, 16),
+                            hintText: "Cidade",
+                            filled: true,
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30)),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    const BorderSide(color: Colors.green),
+                                borderRadius: BorderRadius.circular(30))),
+                        cursorColor: Colors.green)),
                 BotaoCustomizado(
-                  texto: "Salvar",
+                  texto: "Salvar Doação",
                   onPressed: () {
                     _formKey.currentState!.save();
+                    _dialogContext = context;
                     _salvarDoacao();
                   },
                 )

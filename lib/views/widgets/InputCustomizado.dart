@@ -7,10 +7,6 @@ class InputCustomizado extends StatelessWidget {
   final bool obscure;
   final bool autofocus;
   final TextInputType type;
-  // final List<TextInputFormatter> inputFormatters;
-  // final int maxLines;
-  // final Function(String) validator;
-   final Function(String) onSubmitted;
 
   InputCustomizado(
       {Key? key,
@@ -18,18 +14,15 @@ class InputCustomizado extends StatelessWidget {
       required this.hint,
       this.obscure = false,
       this.autofocus = false,
-      this.type = TextInputType.text, required this.onSubmitted,})
+      this.type = TextInputType.text})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
         controller: controller,
         obscureText: obscure,
         keyboardType: type,
-        onSubmitted: onSubmitted,
-        // inputFormatters: inputFormatters,
-        // maxLines: maxLines,
         autofocus: autofocus,
         style: const TextStyle(fontSize: 16),
         decoration: InputDecoration(

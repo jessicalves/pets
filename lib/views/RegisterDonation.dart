@@ -1,8 +1,12 @@
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:pets/models/Donation.dart';
 import 'package:pets/views/widgets/BotaoCustomizado.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:estados_municipios/estados_municipios.dart';
+import 'package:pets/views/widgets/InputCustomizado.dart';
 
 class NewDonation extends StatefulWidget {
   const NewDonation({Key? key}) : super(key: key);
@@ -16,6 +20,11 @@ class _NewDonationState extends State<NewDonation> {
   List<DropdownMenuItem<String>> _litaEstados = [];
   List<DropdownMenuItem<String>> _litaCategoria = [];
   File? _image;
+  final TextEditingController _controllerTitulo = TextEditingController();
+  final TextEditingController _controllerDescricao = TextEditingController();
+  final TextEditingController _controllerContato = TextEditingController();
+  final TextEditingController _controllerCidade = TextEditingController();
+  late Donation _doacao;
 
   Future<void> _selectImage() async {
     final pickedImage = await pickImage();
@@ -33,11 +42,24 @@ class _NewDonationState extends State<NewDonation> {
     return File(pickedFile.path);
   }
 
+  Future _uploadImagens() async {
+    FirebaseStorage storage = FirebaseStorage.instance;
+    String nameImage = DateTime.now().microsecondsSinceEpoch.toString();
+    Reference storageRef =
+        storage.ref().child("doacoes").child(_doacao.id).child(nameImage);
+    UploadTask uploadTask = storageRef.putFile(_image!);
+    TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
+
+    String url = await taskSnapshot.ref.getDownloadURL();
+    _doacao.foto = url;
+  }
+
   @override
-  void initState() {
+  initState() {
     // TODO: implement initState
     super.initState();
     _carregarItensDropDown();
+    _doacao = Donation();
   }
 
   _carregarItensDropDown() async {
@@ -70,6 +92,17 @@ class _NewDonationState extends State<NewDonation> {
       value: "5",
       child: Text("Outros"),
     ));
+
+    setState(() {
+      _litaEstados;
+      _litaCategoria;
+    });
+  }
+
+  _salvarDoacao() async {
+
+    await _uploadImagens();
+    print(_doacao.foto);
   }
 
   @override
@@ -210,6 +243,9 @@ class _NewDonationState extends State<NewDonation> {
                       padding: const EdgeInsets.all(8),
                       child: DropdownButtonFormField(
                         hint: const Text("Estados"),
+                        onSaved: (estado) {
+                          _doacao.estado = estado!;
+                        },
                         style:
                             const TextStyle(color: Colors.black, fontSize: 20),
                         items: _litaEstados,
@@ -221,6 +257,9 @@ class _NewDonationState extends State<NewDonation> {
                       padding: const EdgeInsets.all(8),
                       child: DropdownButtonFormField(
                         hint: const Text("Categorias"),
+                        onSaved: (categora) {
+                          _doacao.categoria = categora!;
+                        },
                         style:
                             const TextStyle(color: Colors.black, fontSize: 20),
                         items: _litaCategoria,
@@ -229,13 +268,52 @@ class _NewDonationState extends State<NewDonation> {
                     )),
                   ],
                 ),
-                Text("Input"),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15, top: 15),
+                  child: InputCustomizado(
+                    onSubmitted: (titulo) {
+                      _doacao.titulo = titulo;
+                    },
+                    hint: "Título",
+                    controller: _controllerTitulo,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: InputCustomizado(
+                    hint: "Descricão",
+                    onSubmitted: (descricao) {
+                      _doacao.descricao = descricao;
+                    },
+                    controller: _controllerDescricao,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: InputCustomizado(
+                    hint: "Contato",
+                    onSubmitted: (contato) {
+                      _doacao.contato = contato;
+                    },
+                    controller: _controllerContato,
+                    type: TextInputType.phone,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: InputCustomizado(
+                    hint: "Cidade",
+                    onSubmitted: (cidade) {
+                      _doacao.cidade = cidade;
+                    },
+                    controller: _controllerCidade,
+                  ),
+                ),
                 BotaoCustomizado(
                   texto: "Salvar",
                   onPressed: () {
-                    // if(_formKey.currentState.validate()){
-                    //
-                    // }
+                    _formKey.currentState!.save();
+                    _salvarDoacao();
                   },
                 )
               ],

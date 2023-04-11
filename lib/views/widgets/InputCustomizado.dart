@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class InputCustomizado extends StatelessWidget {
   final TextEditingController controller;
@@ -6,14 +7,18 @@ class InputCustomizado extends StatelessWidget {
   final bool obscure;
   final bool autofocus;
   final TextInputType type;
+  // final List<TextInputFormatter> inputFormatters;
+  // final int maxLines;
+  // final Function(String) validator;
+   final Function(String) onSubmitted;
 
-  const InputCustomizado(
+  InputCustomizado(
       {Key? key,
       required this.controller,
       required this.hint,
       this.obscure = false,
       this.autofocus = false,
-      this.type = TextInputType.text})
+      this.type = TextInputType.text, required this.onSubmitted,})
       : super(key: key);
 
   @override
@@ -22,6 +27,9 @@ class InputCustomizado extends StatelessWidget {
         controller: controller,
         obscureText: obscure,
         keyboardType: type,
+        onSubmitted: onSubmitted,
+        // inputFormatters: inputFormatters,
+        // maxLines: maxLines,
         autofocus: autofocus,
         style: const TextStyle(fontSize: 16),
         decoration: InputDecoration(

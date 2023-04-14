@@ -16,8 +16,9 @@ class ItemDoacao extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: this.onTapItem,
       child: Card(
+        elevation: 2,
         child: Padding(
           padding: EdgeInsets.all(12),
           child: Row(
@@ -63,7 +64,7 @@ class ItemDoacao extends StatelessWidget {
                   child: IconButton(
                     icon: Icon(Icons.delete),
                     color: Colors.red,
-                    onPressed: () {},
+                    onPressed: this.onPressedRemover,
                   ),
                 )
             ],

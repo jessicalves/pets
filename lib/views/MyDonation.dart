@@ -18,7 +18,6 @@ class _MinhasDoacoesState extends State<MinhasDoacoes> {
 
   _adicionarListenerDoacao() {
     FirebaseFirestore db = FirebaseFirestore.instance;
-
     FirebaseAuth auth = FirebaseAuth.instance;
     var usuarioLogado = auth.currentUser;
 
@@ -33,6 +32,25 @@ class _MinhasDoacoesState extends State<MinhasDoacoes> {
     });
   }
 
+  void _removerDoacao(String idDoacao) {
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    FirebaseAuth auth = FirebaseAuth.instance;
+    var usuarioLogado = auth.currentUser;
+
+    db
+        .collection("minhas_doacoes")
+        .doc(usuarioLogado?.uid)
+        .collection("doacoes")
+        .doc(idDoacao)
+        .delete()
+        .then((value) => {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Removido com sucesso!'),
+                ),
+              )
+            });
+  }
 
   @override
   void initState() {
@@ -95,7 +113,38 @@ class _MinhasDoacoesState extends State<MinhasDoacoes> {
                     return ItemDoacao(
                       donation: donation,
                       onTapItem: () {},
-                      onPressedRemover: () {},
+                      onPressedRemover: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Text("Confirmar"),
+                                content:
+                                    Text("Deseja realmente excluir a doação?"),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text(
+                                      "Cancelar",
+                                      style: TextStyle(color: Colors.green),
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      _removerDoacao(donation.id);
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text(
+                                      "Remover",
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                  )
+                                ],
+                              );
+                            });
+                      },
                     );
                   });
           }

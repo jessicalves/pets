@@ -200,7 +200,7 @@ class _HomeDonationState extends State<HomeDonation> {
               icon: const Icon(Icons.dashboard),
               color: Colors.green,
               onPressed: () {
-                Navigator.pushReplacementNamed(context, "/articles");
+                Navigator.pushReplacementNamed(context, "/my");
               },
               iconSize: 40,
             ),

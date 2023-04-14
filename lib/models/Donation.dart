@@ -10,7 +10,20 @@ class Donation {
   String _cidade = "";
   String _foto = "";
 
-  Donation() {
+  Donation();
+
+  Donation.fromDocumentSnapshot(DocumentSnapshot documentSnapshot) {
+    id = documentSnapshot.id;
+    estado = documentSnapshot["estado"];
+    categoria = documentSnapshot["categoria"];
+    titulo = documentSnapshot["titulo"];
+    descricao = documentSnapshot["descricao"];
+    contato = documentSnapshot["contato"];
+    cidade = documentSnapshot["cidade"];
+    foto = documentSnapshot["foto"];
+  }
+
+  Donation.gerarId() {
     FirebaseFirestore db = FirebaseFirestore.instance;
     CollectionReference novaColecaoRef = db.collection("doacoes");
     var novoRegistroRef = novaColecaoRef.doc();
@@ -18,9 +31,9 @@ class Donation {
     id = novoRegistroKey;
   }
 
-  Map<String, dynamic> toMap(){
+  Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {
-      "id" : id,
+      "id": id,
       "estado": estado,
       "categoria": categoria,
       "titulo": titulo,

@@ -62,7 +62,7 @@ class _NewDonationState extends State<NewDonation> {
     // TODO: implement initState
     super.initState();
     _carregarItensDropDown();
-    _doacao = Donation();
+    _doacao = Donation.gerarId();
   }
 
   _carregarItensDropDown() async {

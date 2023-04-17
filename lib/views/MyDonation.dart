@@ -43,7 +43,8 @@ class _MinhasDoacoesState extends State<MinhasDoacoes> {
         .collection("doacoes")
         .doc(idDoacao)
         .delete()
-        .then((value) => {
+        .then((_) => {
+              db.collection("doacoes").doc(idDoacao).delete(),
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text('Removido com sucesso!'),
@@ -75,15 +76,6 @@ class _MinhasDoacoesState extends State<MinhasDoacoes> {
         automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Colors.black,
-          ),
-          onPressed: () {
-            Navigator.pushNamed(context, "/donation");
-          },
-        ),
       ),
       body: StreamBuilder(
         stream: _controller.stream,
@@ -150,6 +142,32 @@ class _MinhasDoacoesState extends State<MinhasDoacoes> {
           }
           return Container();
         },
+      ),
+      bottomNavigationBar: BottomAppBar(
+        elevation: 10,
+        shape: CircularNotchedRectangle(),
+        color: Colors.white,
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.edit_note),
+              color: Colors.green,
+              onPressed: () {
+              },
+              iconSize: 40,
+            ),
+            IconButton(
+              icon: const Icon(Icons.volunteer_activism),
+              color: Colors.grey,
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, "/donation");
+              },
+              iconSize: 40,
+            ),
+          ],
+        ),
       ),
     );
   }

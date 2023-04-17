@@ -1,14 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:pets/models/Donation.dart';
 import 'package:pets/views/widgets/BotaoCustomizado.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:estados_municipios/estados_municipios.dart';
-import 'package:pets/views/widgets/InputCustomizado.dart';
 
 class NewDonation extends StatefulWidget {
   const NewDonation({Key? key}) : super(key: key);
@@ -74,7 +72,6 @@ class _NewDonationState extends State<NewDonation> {
         child: Text(estado.sigla.toString()),
       ));
     }
-
     _litaCategoria.add(const DropdownMenuItem(
       value: "Alimentos",
       child: Text("Alimentos"),
@@ -137,8 +134,12 @@ class _NewDonationState extends State<NewDonation> {
         .doc(_doacao.id)
         .set(_doacao.toMap())
         .then((value) => {
-              Navigator.pop(_dialogContext),
-              Navigator.pop(context)
+              db
+                  .collection("doacoes")
+                  .doc(_doacao.id)
+                  .set(_doacao.toMap())
+                  .then(
+                      (_) => {Navigator.pop(_dialogContext), Navigator.pushNamed(context, "/my")}),
             });
   }
 

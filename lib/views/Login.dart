@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pets/views/widgets/BotaoCustomizado.dart';
 import 'package:pets/views/widgets/InputCustomizado.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/User.dart';
@@ -121,30 +122,11 @@ class _LoginState extends State<Login> {
                     Text("Cadastrar")
                   ],
                 ),
-                ElevatedButton(
+                BotaoCustomizado(
+                  texto: "Entrar",
                   onPressed: () {
-                    _validarCampos();
+                  _validarCampos();
                   },
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Colors.green),
-                    elevation: MaterialStateProperty.all<double>(5),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Text(
-                        _textoBotao,
-                        style: TextStyle(fontSize: 16, color: Colors.white),
-                      ),
-                    ],
-                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 20),

@@ -4,13 +4,12 @@ import 'package:pets/models/Donation.dart';
 class ItemDoacao extends StatelessWidget {
   Donation donation;
   VoidCallback onTapItem;
-  VoidCallback onPressedRemover;
+  VoidCallback? onPressedRemover;
 
   ItemDoacao(
       {Key? key,
       required this.donation,
-      required this.onTapItem,
-      required this.onPressedRemover})
+      required this.onTapItem, this.onPressedRemover})
       : super(key: key);
 
   @override

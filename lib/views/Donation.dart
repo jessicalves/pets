@@ -1,10 +1,7 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pets/views/widgets/ItemDoacao.dart';
-
 import '../models/Donation.dart';
 
 class HomeDonation extends StatefulWidget {
@@ -16,11 +13,28 @@ class HomeDonation extends StatefulWidget {
 
 class _HomeDonationState extends State<HomeDonation> {
   final _controller = StreamController<QuerySnapshot>.broadcast();
-  late String _categoriaSelecionada;
+  String _categoriaSelecionada = "null";
+  String _antigaCategoria = "null";
+  Color _corSelecionado1 = Colors.white;
+  Color _corSelecionado2 = Colors.white;
+  Color _corSelecionado3 = Colors.white;
+  Color _corSelecionado4 = Colors.white;
 
   _adicionarListenerDoacao() {
     FirebaseFirestore db = FirebaseFirestore.instance;
     Stream<QuerySnapshot> stream = db.collection("doacoes").snapshots();
+    stream.listen((event) {
+      _controller.add(event);
+    });
+  }
+
+  _filtarDoacaoes() {
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    Query query = db.collection("doacoes");
+    if (_categoriaSelecionada != "null") {
+      query = query.where("categoria", isEqualTo: _categoriaSelecionada);
+    }
+    Stream<QuerySnapshot> stream = query.snapshots();
     stream.listen((event) {
       _controller.add(event);
     });
@@ -57,21 +71,6 @@ class _HomeDonationState extends State<HomeDonation> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // TextField(
-            //   keyboardType: TextInputType.text,
-            //   style: const TextStyle(fontSize: 14),
-            //   decoration: InputDecoration(
-            //       contentPadding: const EdgeInsets.fromLTRB(32, 16, 32, 16),
-            //       hintText: '🔎 Procure por alimentos, acessórios, etc.',
-            //       filled: true,
-            //       border: OutlineInputBorder(
-            //         borderRadius: BorderRadius.circular(30),
-            //       ),
-            //       focusedBorder: OutlineInputBorder(
-            //           borderSide: const BorderSide(color: Colors.green),
-            //           borderRadius: BorderRadius.circular(30))),
-            //   cursorColor: Colors.green,
-            // ),
             SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               scrollDirection: Axis.horizontal,
@@ -80,11 +79,25 @@ class _HomeDonationState extends State<HomeDonation> {
                   const SizedBox(width: 2),
                   ElevatedButton(
                     onPressed: () {
+                      _antigaCategoria = _categoriaSelecionada;
                       _categoriaSelecionada = "Alimentos";
+                      setState(() {
+                        _corSelecionado1 = Colors.green[200]!;
+                        _corSelecionado2 = Colors.white;
+                        _corSelecionado3 = Colors.white;
+                        _corSelecionado4 = Colors.white;
+                      });
+                      if (_categoriaSelecionada == _antigaCategoria) {
+                        _categoriaSelecionada = "null";
+                        setState(() {
+                          _corSelecionado1 = Colors.white;
+                        });
+                      }
+                      _filtarDoacaoes();
                     },
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.white),
+                          MaterialStateProperty.all<Color>(_corSelecionado1),
                       elevation: MaterialStateProperty.all<double>(5),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
@@ -111,11 +124,25 @@ class _HomeDonationState extends State<HomeDonation> {
                   const SizedBox(width: 8),
                   ElevatedButton(
                     onPressed: () {
+                      _antigaCategoria = _categoriaSelecionada;
                       _categoriaSelecionada = "Acessórios";
+                      setState(() {
+                        _corSelecionado2 = Colors.green[200]!;
+                        _corSelecionado1 = Colors.white;
+                        _corSelecionado3 = Colors.white;
+                        _corSelecionado4 = Colors.white;
+                      });
+                      if (_categoriaSelecionada == _antigaCategoria) {
+                        _categoriaSelecionada = "null";
+                        setState(() {
+                          _corSelecionado2 = Colors.white;
+                        });
+                      }
+                      _filtarDoacaoes();
                     },
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.white),
+                          MaterialStateProperty.all<Color>(_corSelecionado2),
                       elevation: MaterialStateProperty.all<double>(5),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
@@ -142,11 +169,25 @@ class _HomeDonationState extends State<HomeDonation> {
                   const SizedBox(width: 8),
                   ElevatedButton(
                     onPressed: () {
+                      _antigaCategoria = _categoriaSelecionada;
                       _categoriaSelecionada = "Brinquedos";
+                      setState(() {
+                        _corSelecionado3 = Colors.green[200]!;
+                        _corSelecionado1 = Colors.white;
+                        _corSelecionado2 = Colors.white;
+                        _corSelecionado4 = Colors.white;
+                      });
+                      if (_categoriaSelecionada == _antigaCategoria) {
+                        _categoriaSelecionada = "null";
+                        setState(() {
+                          _corSelecionado3 = Colors.white;
+                        });
+                      }
+                      _filtarDoacaoes();
                     },
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.white),
+                          MaterialStateProperty.all<Color>(_corSelecionado3),
                       elevation: MaterialStateProperty.all<double>(5),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
@@ -173,11 +214,25 @@ class _HomeDonationState extends State<HomeDonation> {
                   const SizedBox(width: 8),
                   ElevatedButton(
                     onPressed: () {
+                      _antigaCategoria = _categoriaSelecionada;
                       _categoriaSelecionada = "Medicamentos";
+                      setState(() {
+                        _corSelecionado4 = Colors.green[200]!;
+                        _corSelecionado1 = Colors.white;
+                        _corSelecionado2 = Colors.white;
+                        _corSelecionado3 = Colors.white;
+                      });
+                      if (_categoriaSelecionada == _antigaCategoria) {
+                        _categoriaSelecionada = "null";
+                        setState(() {
+                          _corSelecionado4 = Colors.white;
+                        });
+                      }
+                      _filtarDoacaoes();
                     },
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.white),
+                          MaterialStateProperty.all<Color>(_corSelecionado4),
                       elevation: MaterialStateProperty.all<double>(5),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
@@ -222,6 +277,20 @@ class _HomeDonationState extends State<HomeDonation> {
 
                     QuerySnapshot? querySnapshot = snapshot.data;
 
+                    if (querySnapshot?.docs.length == 0) {
+                      return Center(
+                        child: Container(
+                          width: 300,
+                          height: 500,
+                          alignment: Alignment.center,
+                          child: const Text(
+                            "Nenhuma doação para essa categorina ainda...",
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      );
+                    }
                     return SizedBox(
                       height: 620,
                       child: ListView.builder(

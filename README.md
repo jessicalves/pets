@@ -1,6 +1,6 @@
 # pets
 
-Aplicativo Oh My Good
+Aplicativo Oh My Dog
 
 ## Getting Started
 

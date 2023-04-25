@@ -4,7 +4,7 @@ Aplicativo Oh My Dog
 
 ## Getting Started
 
-Este aplicativo desenvolvido em Flutter para a Dispciplina Desenvolvimento de aplicativos Hibrídos da minha Pós Graduação.
+Este aplicativo desenvolvido em Flutter para a dispciplina Desenvolvimento de aplicativos Hibrídos da minha Pós Graduação.
 
 Prints das telas no iOS:
 

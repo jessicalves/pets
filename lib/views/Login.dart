@@ -15,6 +15,7 @@ class _LoginState extends State<Login> {
   bool _cadastrar = false;
   String _mensagemErro = "";
   String _textoBotao = "Entrar";
+  bool _carregando = false;
   final TextEditingController _controllerEmail =
       TextEditingController(text: "jessica@gmail.com");
   final TextEditingController _controllerSenha =
@@ -29,11 +30,17 @@ class _LoginState extends State<Login> {
   }
 
   _logarUsuario(Usuario usuario) {
+    setState(() {
+      _carregando = true;
+    });
     FirebaseAuth auth = FirebaseAuth.instance;
     auth
         .signInWithEmailAndPassword(
             email: usuario.email, password: usuario.senha)
         .then((firebaseUser) {
+      setState(() {
+        _carregando = false;
+      });
       Navigator.pushReplacementNamed(context, "/donation");
     });
   }
@@ -63,6 +70,22 @@ class _LoginState extends State<Login> {
         _mensagemErro = "Preencha o E-mail válido";
       });
     }
+  }
+
+  _verificaUserLogado() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    User user = await auth.currentUser!;
+    if (user != null) {
+      Navigator.pushReplacementNamed(context, "/donation");
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    _verificaUserLogado();
   }
 
   @override
@@ -125,9 +148,19 @@ class _LoginState extends State<Login> {
                 BotaoCustomizado(
                   texto: "Entrar",
                   onPressed: () {
-                  _validarCampos();
+                    _validarCampos();
                   },
                 ),
+                _carregando
+                    ? const Padding(
+                        padding: EdgeInsets.only(top: 20),
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            backgroundColor: Colors.green,
+                          ),
+                        ),
+                      )
+                    : Container(),
                 Padding(
                   padding: const EdgeInsets.only(top: 20),
                   child: Text(

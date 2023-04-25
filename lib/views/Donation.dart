@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pets/views/widgets/ItemDoacao.dart';
 import '../models/Donation.dart';
@@ -46,6 +47,12 @@ class _HomeDonationState extends State<HomeDonation> {
     _adicionarListenerDoacao();
   }
 
+  _selectedMenuItem(String item) async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    await auth.signOut();
+    Navigator.pushReplacementNamed(context, "/");
+  }
+
   @override
   Widget build(BuildContext context) {
     var carregandoDados = Center(
@@ -63,6 +70,23 @@ class _HomeDonationState extends State<HomeDonation> {
             style: TextStyle(color: Colors.black),
           ),
         ),
+        actions: [
+          PopupMenuButton<String>(
+            icon: const Icon(
+              Icons.more_vert,
+              color: Colors.green, // define a cor do ícone
+            ),
+            onSelected: _selectedMenuItem,
+            itemBuilder: (BuildContext context) {
+              return <PopupMenuEntry<String>>[
+                const PopupMenuItem<String>(
+                  value: 'Sair',
+                  child: Text('Sair'),
+                ),
+              ];
+            },
+          ),
+        ],
         backgroundColor: Colors.white,
         elevation: 0,
       ),

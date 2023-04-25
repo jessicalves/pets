@@ -1,16 +1,12 @@
 # pets
 
-Aplicativo Pets
+Aplicativo Oh My Good
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+Este aplicativo desenvolvido em Flutter para a Dispciplina Desenvolvimento de aplicativos Hibrídos da minha Pós Graduação.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Prints das telas no iOS:
+![Uploading Simulator Screenshot - iPhone 14 Pro Max - 2023-04-25 at 20.02.32.png…]()
+![Simulator Screenshot - iPhone 14 Pro Max - 2023-04-25 at 20 02 36](https://user-images.githubusercontent.com/48735842/234426120-396a64b5-7355-45a7-8702-bdaef7256490.png)
+![Uploading Simulator Screenshot - iPhone 14 Pro Max - 2023-04-25 at 20.02.45.png…]()

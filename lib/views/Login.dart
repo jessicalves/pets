@@ -146,7 +146,7 @@ class _LoginState extends State<Login> {
                   ],
                 ),
                 BotaoCustomizado(
-                  texto: "Entrar",
+                  texto: _textoBotao,
                   onPressed: () {
                     _validarCampos();
                   },

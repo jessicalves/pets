@@ -316,7 +316,7 @@ class _HomeDonationState extends State<HomeDonation> {
                       );
                     }
                     return SizedBox(
-                      height: 380,
+                      height: 620,
                       child: ListView.builder(
                           itemCount: querySnapshot?.docs.length,
                           itemBuilder: (_, indice) {

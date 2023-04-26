@@ -17,16 +17,18 @@ class _LoginState extends State<Login> {
   String _textoBotao = "Entrar";
   bool _carregando = false;
   final TextEditingController _controllerEmail =
-      TextEditingController(text: "jessica@gmail.com");
+      TextEditingController();
   final TextEditingController _controllerSenha =
-      TextEditingController(text: "1234567");
+      TextEditingController();
 
   _cadastrarUsuario(Usuario usuario) {
     FirebaseAuth auth = FirebaseAuth.instance;
     auth
         .createUserWithEmailAndPassword(
             email: usuario.email, password: usuario.senha)
-        .then((firebaseUser) {});
+        .then((firebaseUser) {
+      Navigator.pushReplacementNamed(context, "/donation");
+    });
   }
 
   _logarUsuario(Usuario usuario) {

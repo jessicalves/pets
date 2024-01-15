@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:pets/views/widgets/BotaoCustomizado.dart';
 import 'package:pets/views/widgets/InputCustomizado.dart';
@@ -88,6 +89,12 @@ class _LoginState extends State<Login> {
     super.initState();
 
     _verificaUserLogado();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    FirebaseAnalytics.instance.setCurrentScreen(screenName: "Login Screen");
   }
 
   @override

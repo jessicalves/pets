@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pets/models/Donation.dart';
@@ -57,6 +58,12 @@ class _MinhasDoacoesState extends State<MinhasDoacoes> {
   void initState() {
     super.initState();
     _adicionarListenerDoacao();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    FirebaseAnalytics.instance.setCurrentScreen(screenName: "MyDonation Screen");
   }
 
   @override

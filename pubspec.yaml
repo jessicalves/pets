@@ -41,6 +41,7 @@ dependencies:
   firebase_storage: ^11.0.16
   image_picker: ^0.8.7+1
   estados_municipios: ^2.0.1+1
+  firebase_analytics: ^10.8.0
 
 dev_dependencies:
   flutter_test:

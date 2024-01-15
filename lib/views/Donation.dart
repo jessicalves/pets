@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pets/views/widgets/ItemDoacao.dart';
@@ -20,6 +21,7 @@ class _HomeDonationState extends State<HomeDonation> {
   Color _corSelecionado2 = Colors.white;
   Color _corSelecionado3 = Colors.white;
   Color _corSelecionado4 = Colors.white;
+  late DateTime _startTime;
 
   _adicionarListenerDoacao() {
     FirebaseFirestore db = FirebaseFirestore.instance;
@@ -45,6 +47,23 @@ class _HomeDonationState extends State<HomeDonation> {
   void initState() {
     super.initState();
     _adicionarListenerDoacao();
+    _startTime = DateTime.now();
+    FirebaseAnalytics.instance.setUserProperty(name: "testing", value: "test");
+  }
+
+  @override
+  void dispose() {
+    DateTime endTime = DateTime.now();
+    Duration stayTime = endTime.difference(_startTime);
+    FirebaseAnalytics.instance.setUserProperty(
+        name: 'stay_time', value: stayTime.inSeconds.toString());
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    FirebaseAnalytics.instance.setCurrentScreen(screenName: "Donation Screen");
   }
 
   _selectedMenuItem(String item) async {
@@ -55,7 +74,7 @@ class _HomeDonationState extends State<HomeDonation> {
 
   @override
   Widget build(BuildContext context) {
-    var carregandoDados = Center(
+    var carregandoDados = const Center(
       child: Column(
         children: [Text("Carregando doações"), CircularProgressIndicator()],
       ),
@@ -105,6 +124,13 @@ class _HomeDonationState extends State<HomeDonation> {
                     onPressed: () {
                       _antigaCategoria = _categoriaSelecionada;
                       _categoriaSelecionada = "Alimentos";
+                      FirebaseAnalytics.instance.logEvent(
+                        name: 'select_category',
+                        parameters: <String, dynamic>{
+                          'category': 'Alimentos',
+                          'int_parameter': 01,
+                        },
+                      );
                       setState(() {
                         _corSelecionado1 = Colors.green[200]!;
                         _corSelecionado2 = Colors.white;
@@ -129,9 +155,9 @@ class _HomeDonationState extends State<HomeDonation> {
                         ),
                       ),
                     ),
-                    child: Row(
+                    child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
+                      children: [
                         Image(
                           image: AssetImage('assets/dogfood.png'),
                           height: 24,
@@ -150,6 +176,13 @@ class _HomeDonationState extends State<HomeDonation> {
                     onPressed: () {
                       _antigaCategoria = _categoriaSelecionada;
                       _categoriaSelecionada = "Acessórios";
+                      FirebaseAnalytics.instance.logEvent(
+                        name: 'select_category',
+                        parameters: <String, dynamic>{
+                          'category': 'Acessórios',
+                          'int_parameter': 02,
+                        },
+                      );
                       setState(() {
                         _corSelecionado2 = Colors.green[200]!;
                         _corSelecionado1 = Colors.white;
@@ -174,9 +207,9 @@ class _HomeDonationState extends State<HomeDonation> {
                         ),
                       ),
                     ),
-                    child: Row(
+                    child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
+                      children: [
                         Image(
                           image: AssetImage('assets/acessories.png'),
                           height: 24,
@@ -195,6 +228,13 @@ class _HomeDonationState extends State<HomeDonation> {
                     onPressed: () {
                       _antigaCategoria = _categoriaSelecionada;
                       _categoriaSelecionada = "Brinquedos";
+                      FirebaseAnalytics.instance.logEvent(
+                        name: 'select_category',
+                        parameters: <String, dynamic>{
+                          'category': 'Brinquedos',
+                          'int_parameter': 03,
+                        },
+                      );
                       setState(() {
                         _corSelecionado3 = Colors.green[200]!;
                         _corSelecionado1 = Colors.white;
@@ -219,9 +259,9 @@ class _HomeDonationState extends State<HomeDonation> {
                         ),
                       ),
                     ),
-                    child: Row(
+                    child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
+                      children: [
                         Image(
                           image: AssetImage('assets/toys.png'),
                           height: 24,
@@ -240,6 +280,13 @@ class _HomeDonationState extends State<HomeDonation> {
                     onPressed: () {
                       _antigaCategoria = _categoriaSelecionada;
                       _categoriaSelecionada = "Medicamentos";
+                      FirebaseAnalytics.instance.logEvent(
+                        name: 'select_category',
+                        parameters: <String, dynamic>{
+                          'category': 'Medicamentos',
+                          'int_parameter': 03,
+                        },
+                      );
                       setState(() {
                         _corSelecionado4 = Colors.green[200]!;
                         _corSelecionado1 = Colors.white;
@@ -264,9 +311,9 @@ class _HomeDonationState extends State<HomeDonation> {
                         ),
                       ),
                     ),
-                    child: Row(
+                    child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
+                      children: [
                         Image(
                           image: AssetImage('assets/medicines.png'),
                           height: 24,
@@ -296,12 +343,13 @@ class _HomeDonationState extends State<HomeDonation> {
                     break;
                   case ConnectionState.active:
                   case ConnectionState.done:
-                    if (snapshot.hasError)
-                      return Text("Erro ao carregar os dados!");
+                    if (snapshot.hasError) {
+                      return const Text("Erro ao carregar os dados!");
+                    }
 
                     QuerySnapshot? querySnapshot = snapshot.data;
 
-                    if (querySnapshot?.docs.length == 0) {
+                    if (querySnapshot!.docs.isEmpty) {
                       return Center(
                         child: Container(
                           width: 300,
@@ -316,7 +364,7 @@ class _HomeDonationState extends State<HomeDonation> {
                       );
                     }
                     return SizedBox(
-                      height: 620,
+                      height: 400,
                       child: ListView.builder(
                           itemCount: querySnapshot?.docs.length,
                           itemBuilder: (_, indice) {
@@ -347,11 +395,11 @@ class _HomeDonationState extends State<HomeDonation> {
           Navigator.pushReplacementNamed(context, "/newDonation");
         },
         backgroundColor: Colors.green,
-        child: const Icon(Icons.pets, size: 40),
+        child: const Icon(Icons.pets, color: Colors.white, size: 40),
       ),
       bottomNavigationBar: BottomAppBar(
         elevation: 10,
-        shape: CircularNotchedRectangle(),
+        shape: const CircularNotchedRectangle(),
         color: Colors.white,
         child: Row(
           mainAxisSize: MainAxisSize.max,

@@ -40,19 +40,19 @@ class ItemDoacao extends StatelessWidget {
                     children: [
                       Text(
                         donation.titulo,
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       Text(
                         donation.descricao,
-                        style: TextStyle(fontSize: 14),
+                        style: const TextStyle(fontSize: 14),
                       ),
                       Text(
                         'Contato: ${donation.contato}',
-                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                       ),
                       Text(
                         '${donation.cidade}-${donation.estado}',
-                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -62,7 +62,7 @@ class ItemDoacao extends StatelessWidget {
                 Expanded(
                   flex: 1,
                   child: IconButton(
-                    icon: Icon(Icons.delete),
+                    icon: const Icon(Icons.delete),
                     color: Colors.red,
                     onPressed: onPressedRemover,
                   ),

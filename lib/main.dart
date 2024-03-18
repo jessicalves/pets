@@ -9,7 +9,6 @@ void main() async {
   try {
     await Firebase.initializeApp();
     FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
-    FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance);
   } catch(e) {
     print("Failed to initialize Firebase: $e");
   }
@@ -19,7 +18,7 @@ void main() async {
     home: Login(),
     initialRoute: "/",
     onGenerateRoute: RouteGenerator.generateRoute,
-      navigatorObservers: [
+    navigatorObservers: [
       FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance)
     ],
   ));

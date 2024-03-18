@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,38 +15,15 @@ class HomeDonation extends StatefulWidget {
 }
 
 class _HomeDonationState extends State<HomeDonation> {
-  final _controller = StreamController<QuerySnapshot>.broadcast();
+  late StreamController<QuerySnapshot> _controller;
   String _categoriaSelecionada = "null";
-  String _antigaCategoria = "null";
-  Color _corSelecionado1 = Colors.white;
-  Color _corSelecionado2 = Colors.white;
-  Color _corSelecionado3 = Colors.white;
-  Color _corSelecionado4 = Colors.white;
+  Color _corSelecionado = Colors.white;
   late DateTime _startTime;
-
-  _adicionarListenerDoacao() {
-    FirebaseFirestore db = FirebaseFirestore.instance;
-    Stream<QuerySnapshot> stream = db.collection("doacoes").snapshots();
-    stream.listen((event) {
-      _controller.add(event);
-    });
-  }
-
-  _filtarDoacaoes() {
-    FirebaseFirestore db = FirebaseFirestore.instance;
-    Query query = db.collection("doacoes");
-    if (_categoriaSelecionada != "null") {
-      query = query.where("categoria", isEqualTo: _categoriaSelecionada);
-    }
-    Stream<QuerySnapshot> stream = query.snapshots();
-    stream.listen((event) {
-      _controller.add(event);
-    });
-  }
 
   @override
   void initState() {
     super.initState();
+    _controller = StreamController<QuerySnapshot>.broadcast();
     _adicionarListenerDoacao();
     _startTime = DateTime.now();
     FirebaseAnalytics.instance.setUserProperty(name: "testing", value: "test");
@@ -57,16 +35,30 @@ class _HomeDonationState extends State<HomeDonation> {
     Duration stayTime = endTime.difference(_startTime);
     FirebaseAnalytics.instance.setUserProperty(
         name: 'stay_time', value: stayTime.inSeconds.toString());
+    _controller.close();
     super.dispose();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    FirebaseAnalytics.instance.setCurrentScreen(screenName: "Donation Screen");
+  void _adicionarListenerDoacao() {
+    FirebaseFirestore.instance.collection("doacoes").snapshots().listen((event) {
+      _controller.add(event);
+    });
   }
 
-  _selectedMenuItem(String item) async {
+  void _filtrarDoacoes(String categoria) {
+    setState(() {
+      _categoriaSelecionada = categoria;
+    });
+    Query query = FirebaseFirestore.instance.collection("doacoes");
+    if (categoria != "null") {
+      query = query.where("categoria", isEqualTo: categoria);
+    }
+    query.snapshots().listen((event) {
+      _controller.add(event);
+    });
+  }
+
+  void _selectedMenuItem(String item) async {
     FirebaseAuth auth = FirebaseAuth.instance;
     await auth.signOut();
     Navigator.pushReplacementNamed(context, "/");
@@ -74,12 +66,6 @@ class _HomeDonationState extends State<HomeDonation> {
 
   @override
   Widget build(BuildContext context) {
-    var carregandoDados = const Center(
-      child: Column(
-        children: [Text("Carregando doações"), CircularProgressIndicator()],
-      ),
-    );
-
     return Scaffold(
       appBar: AppBar(
         title: const Align(
@@ -93,7 +79,7 @@ class _HomeDonationState extends State<HomeDonation> {
           PopupMenuButton<String>(
             icon: const Icon(
               Icons.more_vert,
-              color: Colors.green, // define a cor do ícone
+              color: Colors.green,
             ),
             onSelected: _selectedMenuItem,
             itemBuilder: (BuildContext context) {
@@ -119,43 +105,17 @@ class _HomeDonationState extends State<HomeDonation> {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  const SizedBox(width: 2),
                   ElevatedButton(
-                    onPressed: () {
-                      _antigaCategoria = _categoriaSelecionada;
-                      _categoriaSelecionada = "Alimentos";
-                      FirebaseAnalytics.instance.logEvent(
-                        name: 'select_category',
-                        parameters: <String, dynamic>{
-                          'category': 'Alimentos',
-                          'int_parameter': 01,
-                        },
-                      );
-                      setState(() {
-                        _corSelecionado1 = Colors.green[200]!;
-                        _corSelecionado2 = Colors.white;
-                        _corSelecionado3 = Colors.white;
-                        _corSelecionado4 = Colors.white;
-                      });
-                      if (_categoriaSelecionada == _antigaCategoria) {
-                        _categoriaSelecionada = "null";
-                        setState(() {
-                          _corSelecionado1 = Colors.white;
-                        });
-                      }
-                      _filtarDoacaoes();
-                    },
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(_corSelecionado1),
-                      elevation: MaterialStateProperty.all<double>(5),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
+                    onPressed: () => _filtrarDoacoes("Alimentos"),
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: _categoriaSelecionada == "Alimentos"
+                          ? Colors.green[200]
+                          : Colors.white, elevation: 5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
                       ),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image(
@@ -173,41 +133,17 @@ class _HomeDonationState extends State<HomeDonation> {
                   ),
                   const SizedBox(width: 8),
                   ElevatedButton(
-                    onPressed: () {
-                      _antigaCategoria = _categoriaSelecionada;
-                      _categoriaSelecionada = "Acessórios";
-                      FirebaseAnalytics.instance.logEvent(
-                        name: 'select_category',
-                        parameters: <String, dynamic>{
-                          'category': 'Acessórios',
-                          'int_parameter': 02,
-                        },
-                      );
-                      setState(() {
-                        _corSelecionado2 = Colors.green[200]!;
-                        _corSelecionado1 = Colors.white;
-                        _corSelecionado3 = Colors.white;
-                        _corSelecionado4 = Colors.white;
-                      });
-                      if (_categoriaSelecionada == _antigaCategoria) {
-                        _categoriaSelecionada = "null";
-                        setState(() {
-                          _corSelecionado2 = Colors.white;
-                        });
-                      }
-                      _filtarDoacaoes();
-                    },
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(_corSelecionado2),
-                      elevation: MaterialStateProperty.all<double>(5),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
+                    onPressed: () => _filtrarDoacoes("Acessórios"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _categoriaSelecionada == "Acessórios"
+                          ? Colors.green[200]
+                          : Colors.white,
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
                       ),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image(
@@ -225,41 +161,17 @@ class _HomeDonationState extends State<HomeDonation> {
                   ),
                   const SizedBox(width: 8),
                   ElevatedButton(
-                    onPressed: () {
-                      _antigaCategoria = _categoriaSelecionada;
-                      _categoriaSelecionada = "Brinquedos";
-                      FirebaseAnalytics.instance.logEvent(
-                        name: 'select_category',
-                        parameters: <String, dynamic>{
-                          'category': 'Brinquedos',
-                          'int_parameter': 03,
-                        },
-                      );
-                      setState(() {
-                        _corSelecionado3 = Colors.green[200]!;
-                        _corSelecionado1 = Colors.white;
-                        _corSelecionado2 = Colors.white;
-                        _corSelecionado4 = Colors.white;
-                      });
-                      if (_categoriaSelecionada == _antigaCategoria) {
-                        _categoriaSelecionada = "null";
-                        setState(() {
-                          _corSelecionado3 = Colors.white;
-                        });
-                      }
-                      _filtarDoacaoes();
-                    },
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(_corSelecionado3),
-                      elevation: MaterialStateProperty.all<double>(5),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
+                    onPressed: () => _filtrarDoacoes("Brinquedos"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _categoriaSelecionada == "Brinquedos"
+                          ? Colors.green[200]
+                          : Colors.white,
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
                       ),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image(
@@ -277,41 +189,17 @@ class _HomeDonationState extends State<HomeDonation> {
                   ),
                   const SizedBox(width: 8),
                   ElevatedButton(
-                    onPressed: () {
-                      _antigaCategoria = _categoriaSelecionada;
-                      _categoriaSelecionada = "Medicamentos";
-                      FirebaseAnalytics.instance.logEvent(
-                        name: 'select_category',
-                        parameters: <String, dynamic>{
-                          'category': 'Medicamentos',
-                          'int_parameter': 03,
-                        },
-                      );
-                      setState(() {
-                        _corSelecionado4 = Colors.green[200]!;
-                        _corSelecionado1 = Colors.white;
-                        _corSelecionado2 = Colors.white;
-                        _corSelecionado3 = Colors.white;
-                      });
-                      if (_categoriaSelecionada == _antigaCategoria) {
-                        _categoriaSelecionada = "null";
-                        setState(() {
-                          _corSelecionado4 = Colors.white;
-                        });
-                      }
-                      _filtarDoacaoes();
-                    },
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(_corSelecionado4),
-                      elevation: MaterialStateProperty.all<double>(5),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
+                    onPressed: () => _filtrarDoacoes("Medicamentos"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _categoriaSelecionada == "Medicamentos"
+                          ? Colors.green[200]
+                          : Colors.white,
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
                       ),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image(
@@ -326,29 +214,26 @@ class _HomeDonationState extends State<HomeDonation> {
                         ),
                       ],
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.only(bottom: 10),
-            ),
+            const Padding(padding: EdgeInsets.only(bottom: 10)),
             StreamBuilder(
               stream: _controller.stream,
               builder: (context, snapshot) {
                 switch (snapshot.connectionState) {
                   case ConnectionState.none:
                   case ConnectionState.waiting:
-                    return carregandoDados;
-                    break;
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
                   case ConnectionState.active:
                   case ConnectionState.done:
                     if (snapshot.hasError) {
                       return const Text("Erro ao carregar os dados!");
                     }
-
-                    QuerySnapshot? querySnapshot = snapshot.data;
-
+                    QuerySnapshot? querySnapshot = snapshot.data as QuerySnapshot?;
                     if (querySnapshot!.docs.isEmpty) {
                       return Center(
                         child: Container(
@@ -356,9 +241,11 @@ class _HomeDonationState extends State<HomeDonation> {
                           height: 500,
                           alignment: Alignment.center,
                           child: const Text(
-                            "Nenhuma doação para essa categorina ainda...",
+                            "Nenhuma doação para essa categoria ainda...",
                             style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       );
@@ -366,22 +253,17 @@ class _HomeDonationState extends State<HomeDonation> {
                     return SizedBox(
                       height: 400,
                       child: ListView.builder(
-                          itemCount: querySnapshot?.docs.length,
-                          itemBuilder: (_, indice) {
-                            List<DocumentSnapshot<Object?>>? doacoes =
-                                querySnapshot?.docs
-                                    .cast<DocumentSnapshot<Object?>>()
-                                    .toList();
-                            DocumentSnapshot documentSnapshot =
-                                doacoes![indice];
-                            Donation donation =
-                                Donation.fromDocumentSnapshot(documentSnapshot);
-
-                            return ItemDoacao(
-                              donation: donation,
-                              onTapItem: () {},
-                            );
-                          }),
+                        itemCount: querySnapshot.docs.length,
+                        itemBuilder: (_, indice) {
+                          List<DocumentSnapshot> doacoes =
+                          querySnapshot.docs.cast<DocumentSnapshot>();
+                          Donation donation = Donation.fromDocumentSnapshot(doacoes[indice]);
+                          return ItemDoacao(
+                            donation: donation,
+                            onTapItem: () {},
+                          );
+                        },
+                      ),
                     );
                 }
               },

@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,44 +14,8 @@ class MinhasDoacoes extends StatefulWidget {
 }
 
 class _MinhasDoacoesState extends State<MinhasDoacoes> {
-  final _controller = StreamController<QuerySnapshot>.broadcast();
-
-  _adicionarListenerDoacao() {
-    FirebaseFirestore db = FirebaseFirestore.instance;
-    FirebaseAuth auth = FirebaseAuth.instance;
-    var usuarioLogado = auth.currentUser;
-
-    Stream<QuerySnapshot> stream = db
-        .collection("minhas_doacoes")
-        .doc(usuarioLogado?.uid)
-        .collection("doacoes")
-        .snapshots();
-
-    stream.listen((event) {
-      _controller.add(event);
-    });
-  }
-
-  void _removerDoacao(String idDoacao) {
-    FirebaseFirestore db = FirebaseFirestore.instance;
-    FirebaseAuth auth = FirebaseAuth.instance;
-    var usuarioLogado = auth.currentUser;
-
-    db
-        .collection("minhas_doacoes")
-        .doc(usuarioLogado?.uid)
-        .collection("doacoes")
-        .doc(idDoacao)
-        .delete()
-        .then((_) => {
-              db.collection("doacoes").doc(idDoacao).delete(),
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Removido com sucesso!'),
-                ),
-              )
-            });
-  }
+  late final StreamController<QuerySnapshot> _controller =
+  StreamController<QuerySnapshot>.broadcast();
 
   @override
   void initState() {
@@ -67,10 +30,55 @@ class _MinhasDoacoesState extends State<MinhasDoacoes> {
   }
 
   @override
+  void dispose() {
+    _controller.close();
+    super.dispose();
+  }
+
+  void _adicionarListenerDoacao() {
+    final db = FirebaseFirestore.instance;
+    final auth = FirebaseAuth.instance;
+    final usuarioLogado = auth.currentUser;
+    final stream = db
+        .collection("minhas_doacoes")
+        .doc(usuarioLogado?.uid)
+        .collection("doacoes")
+        .snapshots();
+
+    stream.listen((event) {
+      _controller.add(event);
+    });
+  }
+
+  Future<void> _removerDoacao(String idDoacao) async {
+    final db = FirebaseFirestore.instance;
+    final auth = FirebaseAuth.instance;
+    final usuarioLogado = auth.currentUser;
+
+    await db
+        .collection("minhas_doacoes")
+        .doc(usuarioLogado?.uid)
+        .collection("doacoes")
+        .doc(idDoacao)
+        .delete();
+
+    await db.collection("doacoes").doc(idDoacao).delete();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Removido com sucesso!'),
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    var carregandoDados = Center(
+    final carregandoDados = Center(
       child: Column(
-        children: [Text("Carregando doações"), CircularProgressIndicator()],
+        children: const [
+          Text("Carregando doações"),
+          CircularProgressIndicator(),
+        ],
       ),
     );
 
@@ -86,73 +94,70 @@ class _MinhasDoacoesState extends State<MinhasDoacoes> {
       ),
       body: StreamBuilder(
         stream: _controller.stream,
-        builder: (context, snapshot) {
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
             case ConnectionState.waiting:
               return carregandoDados;
-              break;
             case ConnectionState.active:
             case ConnectionState.done:
-              if (snapshot.hasError) return Text("Erro ao carregar os dados!");
+              if (snapshot.hasError) return const Text("Erro ao carregar os dados!");
 
-              QuerySnapshot? querySnapshot = snapshot.data;
+              final querySnapshot = snapshot.data;
+              final doacoes = querySnapshot?.docs.cast<DocumentSnapshot<Object?>>().toList();
 
               return ListView.builder(
-                  itemCount: querySnapshot?.docs.length,
-                  itemBuilder: (_, indice) {
-                    List<DocumentSnapshot<Object?>>? doacoes = querySnapshot
-                        ?.docs
-                        .cast<DocumentSnapshot<Object?>>()
-                        .toList();
-                    DocumentSnapshot documentSnapshot = doacoes![indice];
-                    Donation donation =
-                        Donation.fromDocumentSnapshot(documentSnapshot);
+                itemCount: doacoes?.length ?? 0,
+                itemBuilder: (_, indice) {
+                  final documentSnapshot = doacoes![indice];
+                  final donation = Donation.fromDocumentSnapshot(documentSnapshot);
 
-                    return ItemDoacao(
-                      donation: donation,
-                      onTapItem: () {},
-                      onPressedRemover: () {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: Text("Confirmar"),
-                                content:
-                                    Text("Deseja realmente excluir a doação?"),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Text(
-                                      "Cancelar",
-                                      style: TextStyle(color: Colors.green),
-                                    ),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      _removerDoacao(donation.id);
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Text(
-                                      "Remover",
-                                      style: TextStyle(color: Colors.red),
-                                    ),
-                                  )
-                                ],
-                              );
-                            });
-                      },
-                    );
-                  });
+                  return ItemDoacao(
+                    donation: donation,
+                    onTapItem: () {},
+                    onPressedRemover: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: const Text("Confirmar"),
+                            content: const Text("Deseja realmente excluir a doação?"),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text(
+                                  "Cancelar",
+                                  style: TextStyle(color: Colors.green),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  _removerDoacao(donation.id);
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text(
+                                  "Remover",
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  );
+                },
+              );
+            default:
+              return Container();
           }
-          return Container();
         },
       ),
       bottomNavigationBar: BottomAppBar(
         elevation: 10,
-        shape: CircularNotchedRectangle(),
+        shape: const CircularNotchedRectangle(),
         color: Colors.white,
         child: Row(
           mainAxisSize: MainAxisSize.max,
@@ -161,8 +166,7 @@ class _MinhasDoacoesState extends State<MinhasDoacoes> {
             IconButton(
               icon: const Icon(Icons.edit_note),
               color: Colors.green,
-              onPressed: () {
-              },
+              onPressed: () {},
               iconSize: 40,
             ),
             IconButton(

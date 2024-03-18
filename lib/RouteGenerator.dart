@@ -9,14 +9,13 @@ class RouteGenerator {
     final name = settings.name;
 
     if (name == '/') {
-      return MaterialPageRoute(builder: (context) => Login());
+      return MaterialPageRoute(builder: (context) => Login(), settings: settings);
     } else if (name == '/my') {
-      final args = settings.arguments;
-      return MaterialPageRoute(builder: (context) => MinhasDoacoes());
+      return MaterialPageRoute(builder: (context) => MinhasDoacoes(), settings: settings);
     } else if (name == '/donation') {
-      return MaterialPageRoute(builder: (context) => HomeDonation());
+      return MaterialPageRoute(builder: (context) => HomeDonation(), settings: settings);
     } else if (name == '/newDonation') {
-      return MaterialPageRoute(builder: (context) => NewDonation());
+      return MaterialPageRoute(builder: (context) => NewDonation(), settings: settings);
     }
 
     return MaterialPageRoute(builder: (_) {
@@ -28,6 +27,6 @@ class RouteGenerator {
           child: Text("Tela não encontrada"),
         ),
       );
-    });
+    }, settings: settings);
   }
 }

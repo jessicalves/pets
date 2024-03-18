@@ -23,16 +23,16 @@ class InputCustomizado extends StatelessWidget {
       obscureText: obscure,
       keyboardType: type,
       autofocus: autofocus,
-      style: TextStyle(fontSize: 16),
+      style: const TextStyle(fontSize: 16),
       decoration: InputDecoration(
-        contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+        contentPadding: const EdgeInsets.fromLTRB(32, 16, 32, 16),
         hintText: hint,
         filled: true,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.green),
+          borderSide: const BorderSide(color: Colors.green),
           borderRadius: BorderRadius.circular(30),
         ),
       ),

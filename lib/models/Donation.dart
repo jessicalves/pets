@@ -1,16 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Donation {
-  String _id = "";
-  String _estado = "";
-  String _categoria = "";
-  String _titulo = "";
-  String _descricao = "";
-  String _contato = "";
-  String _cidade = "";
-  String _foto = "";
+  late String id;
+  late String estado;
+  late String categoria;
+  late String titulo;
+  late String descricao;
+  late String contato;
+  late String cidade;
+  late String foto;
 
-  Donation();
+  Donation({
+    this.id = "",
+    this.estado = "",
+    this.categoria = "",
+    this.titulo = "",
+    this.descricao = "",
+    this.contato = "",
+    this.cidade = "",
+    this.foto = "",
+  });
 
   Donation.fromDocumentSnapshot(DocumentSnapshot documentSnapshot) {
     id = documentSnapshot.id;
@@ -24,15 +33,11 @@ class Donation {
   }
 
   Donation.gerarId() {
-    FirebaseFirestore db = FirebaseFirestore.instance;
-    CollectionReference novaColecaoRef = db.collection("doacoes");
-    var novoRegistroRef = novaColecaoRef.doc();
-    var novoRegistroKey = novoRegistroRef.id;
-    id = novoRegistroKey;
+    id = FirebaseFirestore.instance.collection("doacoes").doc().id;
   }
 
   Map<String, dynamic> toMap() {
-    Map<String, dynamic> map = {
+    return {
       "id": id,
       "estado": estado,
       "categoria": categoria,
@@ -42,55 +47,5 @@ class Donation {
       "cidade": cidade,
       "foto": foto,
     };
-
-    return map;
-  }
-
-  String get foto => _foto;
-
-  set foto(String value) {
-    _foto = value;
-  }
-
-  String get cidade => _cidade;
-
-  set cidade(String value) {
-    _cidade = value;
-  }
-
-  String get contato => _contato;
-
-  set contato(String value) {
-    _contato = value;
-  }
-
-  String get descricao => _descricao;
-
-  set descricao(String value) {
-    _descricao = value;
-  }
-
-  String get titulo => _titulo;
-
-  set titulo(String value) {
-    _titulo = value;
-  }
-
-  String get categoria => _categoria;
-
-  set categoria(String value) {
-    _categoria = value;
-  }
-
-  String get estado => _estado;
-
-  set estado(String value) {
-    _estado = value;
-  }
-
-  String get id => _id;
-
-  set id(String value) {
-    _id = value;
   }
 }

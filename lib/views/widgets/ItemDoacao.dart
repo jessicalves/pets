@@ -2,24 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:pets/models/Donation.dart';
 
 class ItemDoacao extends StatelessWidget {
-  Donation donation;
-  VoidCallback onTapItem;
-  VoidCallback? onPressedRemover;
+  final Donation donation;
+  final VoidCallback onTapItem;
+  final VoidCallback? onPressedRemover;
 
-  ItemDoacao(
-      {Key? key,
-      required this.donation,
-      required this.onTapItem, this.onPressedRemover})
-      : super(key: key);
+  const ItemDoacao({
+    Key? key,
+    required this.donation,
+    required this.onTapItem,
+    this.onPressedRemover,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: this.onTapItem,
+      onTap: onTapItem,
       child: Card(
         elevation: 2,
         child: Padding(
-          padding: EdgeInsets.all(12),
+          padding: const EdgeInsets.all(12),
           child: Row(
             children: [
               SizedBox(
@@ -33,26 +34,26 @@ class ItemDoacao extends StatelessWidget {
               Expanded(
                 flex: 3,
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         donation.titulo,
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      Text(donation.descricao, style: TextStyle(fontSize: 14)),
-                      Text(
-                        'Contato: ' + donation.contato + '',
-                        style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        donation.cidade + '-' + donation.estado,
-                        style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.bold),
-                      )
+                        donation.descricao,
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      Text(
+                        'Contato: ${donation.contato}',
+                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        '${donation.cidade}-${donation.estado}',
+                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                      ),
                     ],
                   ),
                 ),
@@ -63,7 +64,7 @@ class ItemDoacao extends StatelessWidget {
                   child: IconButton(
                     icon: Icon(Icons.delete),
                     color: Colors.red,
-                    onPressed: this.onPressedRemover,
+                    onPressed: onPressedRemover,
                   ),
                 )
             ],
